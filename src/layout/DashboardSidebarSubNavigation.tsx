@@ -158,40 +158,19 @@ function DashboardSidebarSubNavigation({
   sidebarExpandedWidth,
   renderPageItem,
 }: DashboardSidebarSubNavigationProps) {
-  const navigationContext = React.useContext(NavigationContext);
   const theme = useTheme();
-  const location = useLocation();
 
-  const initialExpandedItemIds = React.useMemo(
-    () =>
-      subNavigation
-        .map((navigationItem, navigationItemIndex) => ({
-          navigationItem,
-          originalIndex: navigationItemIndex,
-        }))
-        .filter(
-          ({ navigationItem }) =>
-            isPageItem(navigationItem) &&
-            hasSelectedNavigationChildren(
-              navigationContext,
-              navigationItem,
-              location.pathname
-            )
-        )
-        .map(({ originalIndex }) => `page-${depth}-${originalIndex}`),
-    [depth, navigationContext, subNavigation]
-  );
-
-  const [expandedItemIds, setExpandedItemIds] = React.useState(
-    initialExpandedItemIds
-  );
+  const [expandedItemIds, setExpandedItemIds] = React.useState<string[]>([]);
 
   const ensureItemExpand = React.useCallback(
     (itemId: string, item: NavigationPageItem) => {
+      console.log(expandedItemIds);
       if (item.children && !isMini) {
-        if (!expandedItemIds.includes(itemId)) {
-          setExpandedItemIds([...expandedItemIds, itemId]);
-        }
+        setExpandedItemIds((previousValue) =>
+          previousValue.includes(itemId)
+            ? [...previousValue]
+            : [...previousValue, itemId]
+        );
       }
     },
     [isMini]
