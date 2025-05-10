@@ -23,12 +23,14 @@ import {
 } from "./DashboardSidebarPageItem";
 import { MINI_DRAWER_WIDTH } from "./shared";
 import { alpha, useTheme } from "@mui/material";
+import { useLocation } from "react-router";
 
 interface DashboardSidebarSubNavigationPageItemProps {
   id: string;
   item: NavigationPageItem;
   isExpanded: boolean;
   onClick: (itemId: string, item: NavigationPageItem) => void;
+  ensureExpand: (itemId: string, item: NavigationPageItem) => void;
   depth: number;
   onLinkClick: () => void;
   isMini: boolean;
@@ -49,6 +51,7 @@ function DashboardSidebarSubNavigationPageItem({
   item,
   isExpanded,
   onClick,
+  ensureExpand,
   depth,
   onLinkClick,
   isMini,
@@ -57,18 +60,25 @@ function DashboardSidebarSubNavigationPageItem({
   sidebarExpandedWidth,
   renderPageItem,
 }: DashboardSidebarSubNavigationPageItemProps) {
-  const navigationContext = React.useContext(NavigationContext);
-
-  const activePage = useActivePage();
-
-  const isActive =
-    !!activePage && activePage.path === getItemPath(navigationContext, item);
-
+  const location = useLocation();
   // Show as selected in mini sidebar if any of the children matches path, otherwise show as selected if item matches path
-  const isSelected =
-    activePage && item.children && isMini
-      ? hasSelectedNavigationChildren(navigationContext, item, activePage.path)
-      : isActive && !item.children;
+  const isSelected = (function () {
+    if (item.segment) {
+      console.log(item.segment);
+      // TODO: maybe should add / at segment, not here.
+      const [path, hash] = ("/" + item.segment)?.split("#");
+      if (location.pathname === path) {
+        if (
+          (!location.hash && !hash) ||
+          location.hash.replace("#", "") === hash
+        ) {
+          return true;
+        }
+      }
+      return false;
+    }
+    return false;
+  })();
 
   const pageItemContextProps: DashboardSidebarPageItemContextProps =
     React.useMemo(
@@ -77,6 +87,7 @@ function DashboardSidebarSubNavigationPageItem({
         selected: isSelected,
         id,
         onClick,
+        ensureExpand,
         isMini,
         isSidebarFullyExpanded: isFullyExpanded,
         isSidebarFullyCollapsed: isFullyCollapsed,
@@ -100,6 +111,7 @@ function DashboardSidebarSubNavigationPageItem({
         isSelected,
         item.children,
         onClick,
+        ensureExpand,
         onLinkClick,
         sidebarExpandedWidth,
       ]
@@ -176,6 +188,17 @@ function DashboardSidebarSubNavigation({
     initialExpandedItemIds
   );
 
+  const ensureItemExpand = React.useCallback(
+    (itemId: string, item: NavigationPageItem) => {
+      if (item.children && !isMini) {
+        if (!expandedItemIds.includes(itemId)) {
+          setExpandedItemIds([...expandedItemIds, itemId]);
+        }
+      }
+    },
+    [isMini]
+  );
+
   const handlePageItemClick = React.useCallback(
     (itemId: string, item: NavigationPageItem) => {
       if (item.children && !isMini) {
@@ -186,7 +209,7 @@ function DashboardSidebarSubNavigation({
               )
             : [...previousValue, itemId]
         );
-        onLinkClick();
+        // onLinkClick();
       } else if (!item.children) {
         onLinkClick();
       }
@@ -267,6 +290,7 @@ function DashboardSidebarSubNavigation({
             item={navigationItem}
             isExpanded={expandedItemIds.includes(pageItemId)}
             onClick={handlePageItemClick}
+            ensureExpand={ensureItemExpand}
             depth={depth}
             onLinkClick={onLinkClick}
             isMini={isMini}

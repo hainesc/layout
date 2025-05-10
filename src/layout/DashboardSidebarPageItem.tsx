@@ -87,6 +87,7 @@ export interface DashboardSidebarPageItemContextProps
   extends Partial<DashboardSidebarPageItemProps> {
   id: string;
   onClick: (itemId: string, item: NavigationPageItem) => void;
+  ensureExpand: (itemId: string, item: NavigationPageItem) => void;
   isMini?: boolean;
   isSidebarFullyExpanded?: boolean;
   isSidebarFullyCollapsed?: boolean;
@@ -120,12 +121,13 @@ function DashboardSidebarPageItem(props: DashboardSidebarPageItemProps) {
 
   const {
     item,
-    href = getItemPath(navigationContext, item),
+    // href = getItemPath(navigationContext, item),
     expanded = false,
     selected = false,
     disabled = false,
     id,
     onClick,
+    ensureExpand,
     isMini = false,
     isSidebarFullyExpanded = true,
     isSidebarFullyCollapsed = false,
@@ -136,8 +138,14 @@ function DashboardSidebarPageItem(props: DashboardSidebarPageItemProps) {
     React.useState<string | null>(null);
 
   const handleClick = React.useCallback(() => {
+    console.log(item);
     onClick(id, item);
   }, [id, item, onClick]);
+
+  const handleEnsureExpand = React.useCallback(() => {
+    ensureExpand(id, item);
+    console.log("ensure: ", id);
+  }, [id, item, ensureExpand]);
 
   let nestedNavigationCollapseSx: SxProps<Theme> = { display: "none" };
   if (isMini && isSidebarFullyCollapsed) {
@@ -160,7 +168,6 @@ function DashboardSidebarPageItem(props: DashboardSidebarPageItemProps) {
     };
   }
 
-  console.log(href);
   const title = getItemTitle(item);
 
   const listItem = (
@@ -190,19 +197,21 @@ function DashboardSidebarPageItem(props: DashboardSidebarPageItemProps) {
         }}
         {...(item.children && !isMini
           ? {
-              onClick: handleClick,
+              // onClick: handleClick,
             }
           : {})}
+        {...(!selected && item.children ? { onClick: handleEnsureExpand } : {})}
         {...(!item.children
           ? {
               component: Link,
-              to: { href },
+              to: item.segment,
               onClick: handleClick,
             }
           : {
               // ChangeLog: and this block if we want the parent item can be routed
-              //  LinkComponent,
-              //href,
+              component: Link,
+              to: item.segment,
+              //
             })}
       >
         {item.icon || isMini ? (
@@ -276,7 +285,13 @@ function DashboardSidebarPageItem(props: DashboardSidebarPageItemProps) {
         ) : null}
         {item.action && !isMini && isSidebarFullyExpanded ? item.action : null}
         {item.children ? (
-          <IconButton>
+          <IconButton
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              e.preventDefault();
+              handleClick();
+            }}
+          >
             <ExpandMoreIcon sx={nestedNavigationCollapseSx} />
           </IconButton>
         ) : null}

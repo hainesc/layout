@@ -26,6 +26,14 @@ const router = createBrowserRouter([
             path: "orders",
             Component: OrdersPage,
           },
+          {
+            path: "reports",
+            Component: OrdersPage,
+          },
+          {
+            path: "reports/sales",
+            Component: OrdersPage,
+          },
         ],
       },
     ],

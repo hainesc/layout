@@ -50,7 +50,7 @@ const NAVIGATION: Navigation = [
     icon: <BarChartIcon />,
     children: [
       {
-        segment: "sales",
+        segment: "reports/sales",
         title: "Sales",
 
         icon: <DescriptionIcon />,
