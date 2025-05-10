@@ -21,7 +21,6 @@ import {
 } from "./LayoutContext";
 // import { Account, type AccountProps } from "../Account";
 import { DashboardSidebarSubNavigation } from "./DashboardSidebarSubNavigation";
-import { ToolbarActions } from "./ToolbarActions";
 import { AppTitle, AppTitleProps } from "./AppTitle";
 import {
   getDrawerSxTransitionMixin,
@@ -310,7 +309,6 @@ function DashboardLayout(props: DashboardLayoutProps) {
   const hasDrawerTransitions =
     isOverSmViewport && (!disableCollapsibleSidebar || isOverMdViewport);
 
-  const ToolbarActionsSlot = slots?.toolbarActions ?? ToolbarActions;
   // const ToolbarAccountSlot = slots?.toolbarAccount ?? Account;
   const SidebarFooterSlot = slots?.sidebarFooter ?? null;
 
@@ -462,10 +460,7 @@ function DashboardLayout(props: DashboardLayoutProps) {
               alignItems="center"
               spacing={1}
               sx={{ marginLeft: "auto" }}
-            >
-              <ToolbarActionsSlot {...slotProps?.toolbarActions} />
-              {/* <ToolbarAccountSlot {...slotProps?.toolbarAccount} /> */}
-            </Stack>
+            ></Stack>
 
             <Stack
               direction="row"

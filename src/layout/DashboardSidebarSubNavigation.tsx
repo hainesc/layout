@@ -161,7 +161,7 @@ function DashboardSidebarSubNavigation({
 }: DashboardSidebarSubNavigationProps) {
   const navigationContext = React.useContext(NavigationContext);
   const theme = useTheme();
-  const activePage = useActivePage();
+  const location = useLocation();
 
   const initialExpandedItemIds = React.useMemo(
     () =>
@@ -173,15 +173,14 @@ function DashboardSidebarSubNavigation({
         .filter(
           ({ navigationItem }) =>
             isPageItem(navigationItem) &&
-            !!activePage &&
             hasSelectedNavigationChildren(
               navigationContext,
               navigationItem,
-              activePage.path
+              location.pathname
             )
         )
         .map(({ originalIndex }) => `page-${depth}-${originalIndex}`),
-    [activePage, depth, navigationContext, subNavigation]
+    [depth, navigationContext, subNavigation]
   );
 
   const [expandedItemIds, setExpandedItemIds] = React.useState(
