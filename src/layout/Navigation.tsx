@@ -12,6 +12,7 @@ export interface NavigationPageItem {
   title?: string;
   icon?: React.ReactNode;
   pattern?: string;
+  virtual?: boolean; // a virtual page has no page at parent level.
   action?: React.ReactNode;
   children?: Navigation;
 }

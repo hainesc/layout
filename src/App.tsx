@@ -63,6 +63,25 @@ const NAVIGATION: Navigation = [
     ],
   },
   {
+    segment: "reports1",
+    title: "Reports",
+    icon: <BarChartIcon />,
+    virtual: true,
+    children: [
+      {
+        segment: "reports1/sales",
+        title: "Sales",
+
+        icon: <DescriptionIcon />,
+      },
+      {
+        segment: "traffic",
+        title: "Traffic",
+        icon: <DescriptionIcon />,
+      },
+    ],
+  },
+  {
     segment: "integrations",
     title: "Integrations",
     icon: <LayersIcon />,

@@ -16,7 +16,6 @@ import {
   NavigationContext,
 } from "./LayoutContext";
 import { getDrawerSxTransitionMixin } from "./utils";
-import { useActivePage } from "./useActivePage";
 import {
   DashboardSidebarPageItem,
   DashboardSidebarPageItemContextProps,

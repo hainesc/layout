@@ -106,7 +106,6 @@ const LIST_ITEM_ICON_SIZE = 34;
  * - [DashboardSidebarPageItem API](https://mui.com/toolpad/core/api/dashboard-sidebar-page-item)
  */
 function DashboardSidebarPageItem(props: DashboardSidebarPageItemProps) {
-  const navigationContext = React.useContext(NavigationContext);
   const pageItemContextProps = React.useContext(
     DashboardSidebarPageItemContext
   );
@@ -121,7 +120,6 @@ function DashboardSidebarPageItem(props: DashboardSidebarPageItemProps) {
 
   const {
     item,
-    // href = getItemPath(navigationContext, item),
     expanded = false,
     selected = false,
     disabled = false,
@@ -195,24 +193,13 @@ function DashboardSidebarPageItem(props: DashboardSidebarPageItemProps) {
           px: 1.4,
           height: isMini ? 60 : 48,
         }}
-        {...(item.children && !isMini
+        {...(item.children ? { onClick: handleEnsureExpand } : {})}
+        {...(!item.virtual
           ? {
-              // onClick: handleClick,
+              component: Link,
+              to: item.segment,
             }
           : {})}
-        {...(!selected && item.children ? { onClick: handleEnsureExpand } : {})}
-        {...(!item.children
-          ? {
-              component: Link,
-              to: item.segment,
-              onClick: handleClick,
-            }
-          : {
-              // ChangeLog: and this block if we want the parent item can be routed
-              component: Link,
-              to: item.segment,
-              //
-            })}
       >
         {item.icon || isMini ? (
           <Box
